@@ -1,6 +1,11 @@
 controller:
   hero_chassis_controller:
     type: hero_chassis_controller/HeroChassisController
+    wheel_cmd: 3.0
+    pid_front_left:  {p: 0.5, i: 0.5, d: 0.0, i_clamp_max: 0.5, i_clamp_min: -0.5}
+    pid_front_right: {p: 0.5, i: 0.5, d: 0.0, i_clamp_max: 0.5, i_clamp_min: -0.5}
+    pid_back_left:   {p: 0.5, i: 0.5, d: 0.0, i_clamp_max: 0.5, i_clamp_min: -0.5}
+    pid_back_right:  {p: 0.5, i: 0.5, d: 0.0, i_clamp_max: 0.5, i_clamp_min: -0.5}
 
   joint_state_controller:
     type: joint_state_controller/JointStateController

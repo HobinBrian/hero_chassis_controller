@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
     roscpp
     pluginlib controller_interface hardware_interface
     roslint
+    control_toolbox
     )
 
 ###################################
@@ -24,6 +25,7 @@ catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS roscpp
+    control_toolbox
 )
 
 ###########

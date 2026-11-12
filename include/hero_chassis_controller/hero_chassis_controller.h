@@ -4,6 +4,8 @@
 #include <controller_interface/controller.h>
 #include <hardware_interface/joint_command_interface.h>
 
+#include <control_toolbox/pid.h>
+
 namespace hero_chassis_controller {
 
 class HeroChassisController : public controller_interface::Controller<hardware_interface::EffortJointInterface> {
@@ -17,9 +19,9 @@ class HeroChassisController : public controller_interface::Controller<hardware_i
   void update(const ros::Time &time, const ros::Duration &period) override;
 
   hardware_interface::JointHandle front_left_joint_, front_right_joint_, back_left_joint_, back_right_joint_;
- private:
-  int state_{};
-  ros::Time last_change_;
+  private:
+    control_toolbox::Pid pid_front_left_, pid_front_right_, pid_back_left_, pid_back_right_;
+    double cmd_wheel_{0.0};
 };
 }// namespace hero_chassis_controller
 

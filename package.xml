@@ -11,14 +11,17 @@
   <buildtool_depend>catkin</buildtool_depend>
   <!-- build_depend: dependencies only used in source files -->
   <!-- depend: build, export, and execution dependency -->
+
   <depend>roscpp</depend>
   <depend>controller_interface</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
-
+  <depend>control_toolbox</depend>
 
   <build_depend>roslint</build_depend>
+
   <export>
     <controller_interface plugin="${prefix}/plugins.xml"/>
   </export>
+  
 </package>
