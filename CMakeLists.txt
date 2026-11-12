@@ -14,7 +14,6 @@ find_package(catkin REQUIRED
     COMPONENTS
     roscpp
     pluginlib controller_interface hardware_interface
-    roslint
     control_toolbox
     nav_msgs tf2 tf2_ros
     roslint
@@ -26,7 +25,11 @@ find_package(catkin REQUIRED
 catkin_package(
      INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS roscpp control_toolbox nav_msgs tf2 tf2_ros
+    CATKIN_DEPENDS
+        roscpp
+        pluginlib controller_interface hardware_interface
+        control_toolbox
+        nav_msgs tf2 tf2_ros
 
 )
 

@@ -7,25 +7,29 @@ namespace hero_chassis_controller
 bool HeroChassisController::init(hardware_interface::EffortJointInterface *effort_joint_interface,
                                  ros::NodeHandle &root_nh, ros::NodeHandle &controller_nh) 
 {
-  //tf状态下查询参数
+  // 构造 tf 缓冲与监听器，global 速度模式下用它查询 odom -> base_link
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>();
   tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
 
-  std::string velocity_mode = "body";
-  controller_nh.param<std::string>("velocity_mode", velocity_mode, "body");
+  // 速度模式：local = 底盘坐标系(base_link)，global = 世界坐标系(odom)
+  std::string velocity_mode = "local";
+  controller_nh.param<std::string>("velocity_mode", velocity_mode, "local");
   use_global_frame_ = (velocity_mode == "global");
 
-  //
+  // 四个轮子的关节句柄
   front_left_joint_ = effort_joint_interface->getHandle("left_front_wheel_joint");
   front_right_joint_ = effort_joint_interface->getHandle("right_front_wheel_joint");
   back_left_joint_ = effort_joint_interface->getHandle("left_back_wheel_joint");
   back_right_joint_ = effort_joint_interface->getHandle("right_back_wheel_joint");
 
-  //参数
+  // 底盘几何参数
   controller_nh.param("wheel_radius", wheel_radius_, 0.07625);
   controller_nh.param("wheel_base", wheel_base_, 0.4);
   controller_nh.param("wheel_track", wheel_track_, 0.4);
   k_ = (wheel_base_ + wheel_track_) / 2.0;
+
+  ROS_INFO("[hero_chassis_controller] velocity_mode=%s r=%.5f wheel_base=%.3f wheel_track=%.3f k=%.3f",
+           use_global_frame_ ? "global" : "local", wheel_radius_, wheel_base_, wheel_track_, k_);
 
   if (!pid_front_left_.init(ros::NodeHandle(controller_nh, "pid_front_left")))
     return false;
@@ -93,16 +97,17 @@ void HeroChassisController::update(const ros::Time &time,const ros::Duration &pe
   double cmd_back_left = (vx + vy - k_ * omega) / wheel_radius_;
   double cmd_back_right = (vx - vy + k_ * omega) / wheel_radius_;
 
- front_left_joint_.setCommand
- (pid_front_left_.computeCommand(cmd_front_left - front_left_joint_.getVelocity(), period));
-  front_right_joint_.setCommand
- (pid_front_right_.computeCommand(cmd_front_right - front_right_joint_.getVelocity(), period));
-  back_left_joint_.setCommand
- (pid_back_left_.computeCommand(cmd_back_left - back_left_joint_.getVelocity(), period));
-  back_right_joint_.setCommand
- (pid_back_right_.computeCommand(cmd_back_right - back_right_joint_.getVelocity(), period));
-  
-  //正运动学
+  // 四个轮子各自闭环：期望轮速 - 实测轮速 送 PID，输出力矩指令
+  front_left_joint_.setCommand(
+      pid_front_left_.computeCommand(cmd_front_left - front_left_joint_.getVelocity(), period));
+  front_right_joint_.setCommand(
+      pid_front_right_.computeCommand(cmd_front_right - front_right_joint_.getVelocity(), period));
+  back_left_joint_.setCommand(
+      pid_back_left_.computeCommand(cmd_back_left - back_left_joint_.getVelocity(), period));
+  back_right_joint_.setCommand(
+      pid_back_right_.computeCommand(cmd_back_right - back_right_joint_.getVelocity(), period));
+
+  // 正运动学：四轮实测转速反解底盘速度
   const double vel_fl = front_left_joint_.getVelocity();
   const double vel_fr = front_right_joint_.getVelocity();
   const double vel_bl = back_left_joint_.getVelocity();

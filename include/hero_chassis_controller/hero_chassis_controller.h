@@ -30,10 +30,12 @@ class HeroChassisController : public controller_interface::Controller<hardware_i
 
     void update(const ros::Time &time, const ros::Duration &period) override;
 
-    hardware_interface::JointHandle front_left_joint_, front_right_joint_, back_left_joint_, back_right_joint_;
-
   private:
-    void cmdVelCallback(const geometry_msgs::Twist &msg);//订阅对象
+    // 订阅 /cmd_vel 的回调
+    void cmdVelCallback(const geometry_msgs::Twist &msg);
+
+    // 四个轮子的关节句柄
+    hardware_interface::JointHandle front_left_joint_, front_right_joint_, back_left_joint_, back_right_joint_;
 
     //数据
     ros::Subscriber cmd_vel_sub_;

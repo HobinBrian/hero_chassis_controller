@@ -1,6 +1,9 @@
 controller:
   hero_chassis_controller:
     type: hero_chassis_controller/HeroChassisController
+    # 速度模式：
+    #   local  —— /cmd_vel 视为底盘坐标系(base_link)下的速度，直接送逆运动学
+    #   global —— /cmd_vel 视为世界坐标系(odom)下的速度，先用 tf 旋转到车体系
     velocity_mode: global
     wheel_radius: 0.07625
     wheel_base: 0.4
