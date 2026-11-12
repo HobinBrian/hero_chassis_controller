@@ -1,6 +1,7 @@
 controller:
   hero_chassis_controller:
     type: hero_chassis_controller/HeroChassisController
+    velocity_mode: global
     wheel_radius: 0.07625
     wheel_base: 0.4
     wheel_track: 0.4
@@ -12,3 +13,4 @@ controller:
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 50
+

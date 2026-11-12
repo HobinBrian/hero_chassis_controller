@@ -16,16 +16,18 @@ find_package(catkin REQUIRED
     pluginlib controller_interface hardware_interface
     roslint
     control_toolbox
+    nav_msgs tf2 tf2_ros
+    roslint
     )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
 catkin_package(
-    INCLUDE_DIRS include
+     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS roscpp
-    control_toolbox
+    CATKIN_DEPENDS roscpp control_toolbox nav_msgs tf2 tf2_ros
+
 )
 
 ###########
